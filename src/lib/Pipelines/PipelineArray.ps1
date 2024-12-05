@@ -39,7 +39,7 @@ function toGenericList([string]$T){
     }
     process{
         $isCollect = $_ -is [Array] -or $_ -is [ICollection]
-        if($isCollect){ $l.Add(($_ | toGenericList(&$flatListTypeStr($T)) )) }
+        if($isCollect -and $T.Contains("List[")){ $l.Add(($_ | toGenericList(&$flatListTypeStr($T)) )) }
         else{$l.Add($_)}
     }
     end{,$l}
