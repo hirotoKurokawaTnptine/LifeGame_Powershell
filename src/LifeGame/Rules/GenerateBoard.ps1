@@ -15,6 +15,6 @@ class GenerateBoard {
     static [List[List[State]]]randomBoard([int]$board_size) {
         $rnd = [System.Random]::new()
         return 1..$board_size | map({ $rnd.GetItems(@([State]::ALIVE,[State]::DEAD), $board_size) }) `
-            | toGenericList("List[int]")
+            | toGenericList("List[State]")
     }
 }
