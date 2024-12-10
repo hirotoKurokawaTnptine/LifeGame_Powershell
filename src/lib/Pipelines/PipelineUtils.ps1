@@ -5,3 +5,9 @@ function withIndex() {
     begin  {$i=0}
     process{ $_ | Add-Member -MemberType NoteProperty Index $i; ,$_; $i++ }
 }
+
+function countPipelineElm() {
+    begin { $cnt=0 }
+    process { $cnt++ }
+    end{$cnt}
+}

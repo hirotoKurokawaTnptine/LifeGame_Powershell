@@ -1,5 +1,5 @@
 enum State {
-    ALIVE
-    DEAD
-    WALL
+    ALIVE =  1
+    DEAD  =  0
+    WALL  = -1
 }

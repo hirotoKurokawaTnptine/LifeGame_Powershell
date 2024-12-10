@@ -11,9 +11,8 @@ foreach($f in (Get-ChildItem $pipelineDir -Include "*.ps1")) {
     . $f.FullName
 }
 
-
-
 class LifeGameRule{
+    #番兵法変換
     static [List[List[State]]]walledBoard([List[List[State]]]$board){
         [List[List[State]]]$walledList = @()
         [List[State]]$firstAndLastRow = 1..($board[0].Count+2) | map({[State]::WALL}) | toGenericList("State")
@@ -24,24 +23,36 @@ class LifeGameRule{
         return $walledList
     }
     
+    #隣接セル取得
     static [List[State]]adjacentCells([int]$x, [int]$y,[List[List[State]]]$walled){
         $centerCellIndex = 4
         return ($y-1)..($y+1) | flatMap({$walled[$_][($x-1)..($x+1)]}) | `
             withIndex | filtr({$_.Index -ne $centerCellIndex}) | toGenericList("State")
     }
+    #生存マス取得
+    static [int] aliveCount([int]$x, [int]$y,[List[List[State]]]$walled){
+        $adjaCells = [LifeGameRule]::adjacentCells($x, $y, $walled)
+        return $adjaCells | filtr({ $_ -eq 'ALIVE' }) | countPipelineElm
+    }
 
-    static [boolean]isBirth([int]$targetCell,[int]$aliveCount){
-        return $targetCell -eq [State]::DEAD -and $aliveCount -eq 3
+    static [Func[Func[State,int,boolean], State]]isNextState([State]$targetCell, [int]$aliveCount){
+        return {
+            param($f)
+            if($f.Invoke($targetCell, $aliveCount)){ return [State]::ALIVE }
+            else{ return [State]::DEAD }
+        }.GetNewClosure()
     }
-    static [boolean]isSurvive([int]$targetCell,[int]$aliveCount){ 
-        return ($targetCell -eq [State]::ALIVE) -and $aliveCount -in 2,3
+
+    static [boolean]isBirth([State]$targetCell,[int]$aliveCount){
+        return $targetCell -eq 'DEAD' -and $aliveCount -eq 3
     }
-    static [boolean]isDepopulation([int]$targetCell,[int]$aliveCount){
-        return $targetCell -eq [State]::ALIVE -and $aliveCount -le 1
+    static [boolean]isSurvive([State]$targetCell,[int]$aliveCount){ 
+        return $targetCell -eq 'ALIVE' -and $aliveCount -in 2,3
     }
-    static [boolean]isOvercrowding([int]$targetCell,[int]$aliveCount){
-        return $targetCell -eq [State]::ALIVE -and $aliveCount -ge 4
+    static [boolean]isDepopulation([State]$targetCell,[int]$aliveCount){
+        return $targetCell -eq 'ALIVE' -and $aliveCount -le 1
     }
-    
-    
+    static [boolean]isOvercrowding([State]$targetCell,[int]$aliveCount){
+        return $targetCell -eq 'ALIVE' -and $aliveCount -ge 4
+    }  
 }

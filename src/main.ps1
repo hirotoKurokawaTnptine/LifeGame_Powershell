@@ -22,7 +22,7 @@ function mainLoop {
 
         $keyCode = $rui.ReadKey("NoEcho.IncludeKeyDown").VirtualKeyCode
 
-        if($keyCode -eq $keyMap::Escape) { return; }
+        if($keyCode -eq $keyMap::Escape) { return }
 
         #FPS
         Start-Sleep -Seconds (1/60)

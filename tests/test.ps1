@@ -9,7 +9,8 @@ foreach($f in (Get-ChildItem "$($RootDir)\src\" -Recurse -Include "*.ps1")) {
     . $f.FullName
 }
 
-[GenerateBoard]::randomBoard(8) | frEach({ Write-Host $_ })
+$board = [GenerateBoard]::randomBoard(8)
+[NextTurn]::next($board)
 
 
 
